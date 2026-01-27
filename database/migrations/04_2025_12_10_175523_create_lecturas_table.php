@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreignId('idtema');
             $table->foreignId('idtipo_tirada');
             $table->text('pregunta')->nullable();
-            $table->text('interpretacion')->nullable();
+            $table->longText('interpretacion')->nullable();
             $table->timestamps();
 
             $table->foreign('iduser')->references('id')->on('users')->onDelete('cascade');

@@ -13,6 +13,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http; // Para llamadas HTTP externas (API de Google Gemini)
 use Illuminate\View\View;
 
 class LecturaController extends Controller
@@ -47,7 +48,7 @@ class LecturaController extends Controller
         if ($tema == null) {
             abort(404);
         }
-        
+
         $tipos = TipoTirada::all();
 
         return view('lectura.create', ['tema' => $tema, 'tipos' => $tipos]);
@@ -84,10 +85,14 @@ class LecturaController extends Controller
                 // Saca la cantidad de cartas aleatorias indicada
                 $cartas = Carta::inRandomOrder()->take($cantidad)->get();
 
+                // Variable para enviar a IA
+                $cartasParaIA = "";
+
                 foreach ($cartas as $index => $carta) {
                     // Genera número aleatorio entre 1-100, si es <=20, será carta invertida
                     $invertida = rand(1, 100) <= 20;
 
+                    // Guardamos la carta en la BD
                     CartaLectura::create([
                         'idlectura' => $lectura->id,
                         'idcarta'   => $carta->id,
@@ -95,7 +100,59 @@ class LecturaController extends Controller
                         'invertida' => $invertida,
                         'nombre_posicion' => 'Posición ' . ($index + 1)
                     ]);
+
+                    // Preparamos texto para IA
+                    $estado = $invertida ? "(Invertida)" : "(Al derecho)";
+                    $cartasParaIA .= "- " . $carta->nombre . " $estado\n";
                 }
+
+                // Llamada a API de IA (Google Gemini) para interpretación
+                try {
+                    $temaNombre = $lectura->tema->nombre;
+                    $prompt = "Actúa como una experta tarotista mística.
+                    DATOS:
+                    - Tema: $temaNombre
+                    - Pregunta: '{$lectura->pregunta}'
+                    - Tirada: {$tipoTirada->nombre}
+                    - Cartas: 
+                    $cartasParaIA
+
+                    INSTRUCCIONES DE FORMATO (IMPORTANTE):
+                    1. Usa etiquetas HTML <h3> para el nombre de cada carta.
+                    2. Usa <p> para la explicación de cada carta.
+                    3. Si das consejos, usa una lista <ul> con <li>.
+                    4. Usa <strong> para resaltar palabras clave.
+                    5. No uses Markdown, solo HTML.
+
+                    CONTENIDO:
+                    Responde a la pregunta, interpreta las cartas una por una y da una conclusión final.";
+
+                    $apiKey = env('GEMINI_API_KEY');
+
+                    // Realizamos la petición POST a la API de Google Gemini, previamente indicando formato JSON
+                    $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                        ->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={$apiKey}", [
+                            'contents' => [
+                                ['parts' => [['text' => $prompt]]]
+                            ]
+                        ]);
+
+                    // Guardamos la respuesta si todo va bien
+                    if ($response->successful()) {
+                        $lectura->interpretacion = $response->json()['candidates'][0]['content']['parts'][0]['text'];
+                    } else {
+                        $errorReal = $response->body();
+                        $lectura->interpretacion = "<p><strong>ERROR DE GOOGLE:</strong> $errorReal</p>";
+                        // $lectura->interpretacion = "<p>El oráculo está en silencio (Error de conexión con la IA).</p>";
+                    }
+                } catch (\Exception $eIA) {
+                    // Si falla la IA, no bloqueamos la lectura, solo ponemos un mensaje
+                    $lectura->interpretacion = "<p>Los astros no han podido revelar el mensaje completo en este momento. Guíate por tu intuición.</p>";
+                }
+
+                // Guardamos la lectura de nuevo con la interpretación actualizada
+                $lectura->save();
+
                 $txtmessage = 'Las cartas han hablado.';
             }
         } catch (UniqueConstraintViolationException $e) {

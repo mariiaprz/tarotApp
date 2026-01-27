@@ -5,7 +5,7 @@
 @section('content')
 
 <section class="section bg-cover overlay-secondary-half"
-    style="background-image: url('{{ asset('assets/images/backgrounds/hero.jpg') }}'); padding-top: 150px; padding-bottom: 100px; min-height: 100vh;">
+    style="background-image: url('{{ asset('assets/images/backgrounds/confirm.jpg') }}'); padding-top: 150px; padding-bottom: 100px; min-height: 100vh;">
 
     <div class="container position-relative zindex-1">
         <div class="row justify-content-center">

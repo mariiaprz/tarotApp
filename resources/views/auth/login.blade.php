@@ -59,10 +59,11 @@
                             </div>
 
                             <div class="form-group mb-4">
-                                <div class="custom-control custom-checkbox">
+                                <div class="custom-control custom-checkbox d-flex align-items-center">
+
                                     <input class="custom-control-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                    <label class="custom-control-label text-muted small" for="remember">
-                                        {{ __('Remember Me') }}
+                                    <label class="custom-control-label text-muted" for="remember" style="user-select: none; padding-top: 2px;">
+                                        <span class="small">{{ __('Remember Me') }}</span>
                                     </label>
                                 </div>
                             </div>
