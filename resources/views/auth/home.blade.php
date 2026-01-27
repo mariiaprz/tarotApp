@@ -66,7 +66,7 @@
                                         <i class="ti-time"></i>
                                     </div>
                                     <div>
-                                        <small class="text-muted text-uppercase d-block mb-1">Última Actualización</small>
+                                        <small class="text-muted text-uppercase d-block mb-1">Última Modificación</small>
                                         <h5 class="text-dark mb-0 font-weight-bold" style="font-family: inherit !important;">
                                             {{ Auth::user()->updated_at->format('d/m/Y') }}
                                         </h5>
@@ -76,16 +76,9 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
-
-                            @if(Route::has('home.edit'))
-                            <a href="{{ route('home.edit') }}" class="btn btn-primary shadow px-4">
+                            <a href="{{ route('home.edit') }}" class="btn btn-primary px-4">
                                 <i class="ti-pencil mr-1"></i> Editar Perfil
                             </a>
-                            @else
-                            <button class="btn btn-outline-secondary" disabled title="Función en desarrollo">
-                                <i class="ti-pencil mr-1"></i> Editar Perfil
-                            </button>
-                            @endif
 
                             <a href="{{ route('logout') }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form-profile').submit();"

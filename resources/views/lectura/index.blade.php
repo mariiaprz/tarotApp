@@ -4,84 +4,126 @@
 
 @section('content')
 
-<section class="section bg-light" style="min-height: 100vh; padding-top: 150px;">
-    <div class="container">
+<section class="section pb-0"
+    style="background-image: url('{{ asset('assets/images/banner/banner.jpg') }}'); 
+           background-size: cover; 
+           background-position: center; 
+           padding-top: 180px; 
+           padding-bottom: 80px;
+           position: relative;">
 
-        <div class="row mb-5">
-            <div class="col-12 text-center">
-                <h2 class="section-title text-secondary">Tu Historial Espiritual</h2>
-                <p class="lead text-muted">Repasa los consejos que el oráculo te ha dado en el pasado.</p>
-                <div class="section-border"></div>
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 5, 38, 0.8); z-index: 1;"></div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="font-weight-bold text-white" style="font-family: inherit !important; letter-spacing: 2px;">Tu Historial Espiritual</h2>
+                <p class="text-white-50 italic" style="font-family: inherit !important;">"Los mensajes del oráculo que han marcado tu camino."</p>
+                <div class="section-border bg-white" style="opacity: 0.5;"></div>
             </div>
         </div>
+    </div>
+</section>
+
+<section class="section bg-light" style="min-height: 70vh; padding-top: 60px;">
+    <div class="container">
 
         @if($lecturas->count() > 0)
         <div class="row">
             @foreach($lecturas as $lectura)
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card hover-shadow h-100 border-0 shadow-sm">
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; overflow: hidden;">
+                    <div style="height: 4px; background: #c77dff;"></div>
 
-                    <div class="card-header bg-white border-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
-                        <span class="badge badge-pill px-3 py-2" style="background-color: #f8f5fa; color: #1a0526; border: 1px solid #c77dff;">
-                            {{ $lectura->tema->nombre }}
-                        </span>
-                        <small class="text-muted font-italic">{{ $lectura->created_at->format('d/m/Y') }}</small>
-                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge px-3 py-2" style="background-color: #f8f5fa; color: #6f42c1; border: 1px solid #e9ecef; font-family: inherit !important;">
+                                {{ $lectura->tema->nombre }}
+                            </span>
+                            <small class="text-muted"><i class="ti-calendar mr-1"></i> {{ $lectura->created_at->format('d/m/Y') }}</small>
+                        </div>
 
-                    <div class="card-body px-4">
-                        <h5 class="card-title mt-3 text-secondary" style="font-weight: 600;">
-                            <!-- Usado para limitar la pregunta que nos hagan a 60 caracteres a la hora de visualizarla -->
-                            {{ Str::limit($lectura->pregunta, 60, '...') }}
-                        </h5>
-                        <p class="card-text text-muted small">
-                            <i class="ti-layers-alt mr-1"></i> Tirada: {{ $lectura->tipoTirada->nombre ?? 'General' }}
+                        <h4 class="mb-3 text-secondary" style="font-family: inherit !important; font-weight: 600; line-height: 1.4;">
+                            "{{ Str::limit($lectura->pregunta, 80, '...') }}"
+                        </h4>
+
+                        <p class="text-muted small mb-4">
+                            <i class="ti-layout-grid2 mr-1"></i> Tirada: {{ $lectura->tipoTirada->nombre ?? 'Oráculo' }}
                         </p>
-                    </div>
 
-                    <div class="card-footer bg-white border-0 pb-4 px-4 d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                            
+                            <a href="{{ route('lectura.show', $lectura->id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                                Releer Mensaje <i class="ti-arrow-right ml-1"></i>
+                            </a>
 
-                        <a href="{{ route('lectura.show', $lectura->id) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="ti-eye mr-1"></i> Ver
-                        </a>
-
-                        <form action="{{ route('lectura.destroy', $lectura->id) }}" method="POST"
-                            onsubmit="return confirm('¿Seguro que quieres olvidar esta lectura? La energía se perderá para siempre.');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm text-danger bg-transparent border-0 p-0" title="Eliminar">
-                                <i class="ti-trash" style="font-size: 18px;"></i>
+                            <button type="button" 
+                                    class="btn-icon bg-white text-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center border-0"
+                                    style="width: 35px; height: 35px; cursor: pointer; transition: 0.3s;"
+                                    data-toggle="modal" 
+                                    data-target="#modalBorrar-{{ $lectura->id }}"
+                                    onmouseover="this.style.backgroundColor='#fff5f5';"
+                                    onmouseout="this.style.backgroundColor='#fff';">
+                                <i class="ti-trash"></i>
                             </button>
-                        </form>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalBorrar-{{ $lectura->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+                        
+                        <div class="modal-header border-0" style="background-color: #1a0526;">
+                            <h5 class="modal-title font-weight-bold" style="color: #ffffff !important;">
+                                <i class="ti-alert mr-2" style="color: #ffffff !important;"></i> Eliminar Lectura
+                            </h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body p-4 text-center">
+                            <p class="text-secondary font-weight-bold mb-2">¿Quieres borrar este mensaje del destino?</p>
+                            <p class="text-muted small font-italic mb-0">"{{ Str::limit($lectura->pregunta, 50) }}"</p>
+                            <p class="text-danger small mt-3 mb-0">Esta acción es irreversible.</p>
+                        </div>
+
+                        <div class="modal-footer border-0 justify-content-center pb-4">
+                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-4" data-dismiss="modal">
+                                Cancelar
+                            </button>
+                            
+                            <form action="{{ route('lectura.destroy', $lectura->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4 shadow">
+                                    Sí, Eliminar
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
 
-        <div class="row mt-5">
-            <div class="col-12 text-center">
-                <a href="{{ route('main') }}#seccion-temas" class="btn btn-primary btn-lg shadow">
-                    Consultar de nuevo al Tarot
-                </a>
-            </div>
+        <div class="text-center mt-5">
+            <a href="{{ route('main') }}#seccion-temas" class="btn btn-primary btn-lg shadow px-5 rounded-pill">
+                Nueva Consulta al Tarot
+            </a>
         </div>
 
         @else
         <div class="row justify-content-center">
             <div class="col-lg-6 text-center">
-                <div class="card shadow border-0 p-5 mt-4">
-                    <div class="mb-4">
-                        <span class="icon-lg icon-box rounded-circle bg-secondary text-white shadow">
-                            <i class="ti-thought"></i>
-                        </span>
-                    </div>
-                    <h3 class="text-secondary">Aún no has consultado al oráculo</h3>
-                    <p class="text-muted mb-4">Tu destino está esperando ser revelado. Elige un tema y haz tu primera pregunta para verla aquí.</p>
-
-                    <a href="{{ route('main') }}#seccion-temas" class="btn btn-primary btn-lg">
-                        Comenzar Nueva Lectura
-                    </a>
+                <div class="card shadow-sm border-0 p-5 bg-white" style="border-radius: 20px;">
+                    <i class="ti-receipt display-4 text-muted mb-3 d-block"></i>
+                    <h3 class="text-secondary" style="font-family: inherit !important;">Aún no hay registros</h3>
+                    <p class="text-muted mb-4">Tu camino espiritual está empezando. Haz tu primera pregunta.</p>
+                    <a href="{{ route('main') }}#seccion-temas" class="btn btn-primary rounded-pill px-4">Empezar Ahora</a>
                 </div>
             </div>
         </div>

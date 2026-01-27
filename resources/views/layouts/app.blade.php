@@ -88,35 +88,36 @@
     </header>
 
     @if(session('mensajeTexto') || session('status') || session('general') || $errors->any())
-    <div class="container" style="padding-top: 120px; padding-bottom: 20px;">
+    <div style="position: fixed; top: 100px; right: 20px; z-index: 1050; width: 350px;">
 
-        @if (session('mensajeTexto') || session('status') || session('general'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0">
+        @if(session('mensajeTexto') || session('status') || session('general'))
+        <div class="alert shadow border-0"
+            style="background-color: #1a0526; color: #fff; border-radius: 10px; border-left: 5px solid #c77dff !important;">
             <div class="d-flex align-items-center">
-                <i class="ti-check-box mr-3" style="font-size: 1.2rem;"></i>
-                <div>{{ session('mensajeTexto') ?? session('status') ?? session('general') }}</div>
+                <i class="ti-check text-primary mr-3" style="font-size: 1.2rem;"></i>
+                <div class="small">{{ session('mensajeTexto') ?? session('status') ?? session('general') }}</div>
+                <button type="button" class="close ml-auto" data-dismiss="alert" style="color: #fff; opacity: 0.8;">&times;</button>
             </div>
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
         </div>
         @endif
 
         @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0">
+        <div class="alert shadow border-0"
+            style="background-color: #2d0a1a; color: #fff; border-radius: 10px; border-left: 5px solid #ff4d4d !important;">
             <div class="d-flex align-items-start">
-                <i class="ti-alert mr-3 mt-1" style="font-size: 1.2rem;"></i>
-                <div>
-                    <strong>Por favor, revisa lo siguiente:</strong>
+                <i class="ti-alert mr-3 mt-1" style="color: #ff4d4d; font-size: 1.2rem;"></i>
+                <div class="small">
+                    <strong>Revisa:</strong>
                     <ul class="mb-0 pl-3 mt-1">
                         @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
+                <button type="button" class="close ml-auto" data-dismiss="alert" style="color: #fff; opacity: 0.8;">&times;</button>
             </div>
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
         </div>
         @endif
-
     </div>
     @endif
 

@@ -6,8 +6,8 @@
 
 <section class="position-relative text-center d-flex align-items-center justify-content-center"
     style="
-        background-color: #2a0a4d; /* Fondo de seguridad */
-        background-image: url('{{ asset('assets/images/banner/banner2.jpg') }}'); /* Imagen de fondo */
+        background-color: #2a0a4d;
+        background-image: url('{{ asset('assets/images/banner/banner2.jpg') }}');
         background-size: cover;
         background-position: center;
         height: 400px;">

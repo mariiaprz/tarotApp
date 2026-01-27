@@ -152,7 +152,7 @@
                 <div class="card hover-shadow h-100">
 
                     <div style="height: 400px; overflow: hidden;">
-                        <img src="{{ asset('img/cartas/' . $carta->imagen) }}"
+                        <img src="{{ asset($carta->imagen) }}"
                             alt="{{ $carta->nombre }}"
                             class="card-img-top"
                             style="width: 100%; height: 100%; object-fit: cover;">

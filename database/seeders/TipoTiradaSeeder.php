@@ -18,17 +18,15 @@ class TipoTiradaSeeder extends Seeder
             'Carta del Día',
             'Pasado, Presente, Futuro',
             'Cruz Simple',
-            'Tirada del Amor',
             'Cruz Celta'
         ];
 
-        $num_cartas = [1, 3, 5, 7, 10];
+        $num_cartas = [1, 3, 5, 10];
 
         $descripciones = [
             'Una sola carta para obtener un consejo rápido o una guía para tu jornada.',
             'Tirada clásica que revela la evolución temporal: origen, situación actual y desenlace.',
             'Cinco cartas para una visión general: situación, obstáculo, consejo y resultado.',
-            'Análisis profundo de sentimientos y el futuro de la relación de pareja.',
             'La tirada más completa para situaciones complejas, cubriendo pasado, influencias y futuro lejano.'
         ];
 
