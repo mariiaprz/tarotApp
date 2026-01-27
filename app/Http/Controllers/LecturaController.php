@@ -25,17 +25,30 @@ class LecturaController extends Controller
     }
 
     // INDEX
-    function index(): View
+    function index(Request $request): View
     {
+        // Obtiene todos los temas para el filtro
+        $temas = Tema::all();
+
         // Obtiene usuario conectado actualmente
         $user = Auth::user();
-        // Busca lecturas del tema asociado, más recientes primero
-        $lecturas = Lectura::where('iduser', $user->id)
-            ->with('tema')
-            ->orderBy('created_at', 'desc')
-            ->get();
 
-        return view('lectura.index', ['lecturas' => $lecturas]);
+        // Busca lecturas del tema asociado, más recientes primero
+        $query = Lectura::where('iduser', $user->id)
+            ->with('tema')
+            ->orderBy('created_at', 'desc');
+
+        // Aplica el filtro si el usuario seleccionó un tema
+        if ($request->has('tema_id') && $request->tema_id != '') {
+            $query->where('idtema', $request->tema_id);
+        }
+
+        // Pagina los resultados (8 por página)
+        // ->appends(...) sirve para que no se pierda el filtro al cambiar de página
+        $lecturas = $query->paginate(8)->appends($request->all());
+
+        // Envia tanto las lecturas como la lista de temas a la vista
+        return view('lectura.index', ['lecturas' => $lecturas, 'temas' => $temas]);
     }
 
     // CREATE (Formulario)

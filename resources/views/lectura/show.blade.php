@@ -4,40 +4,6 @@
 
 @section('content')
 
-<style>
-    /* Estilos para la interpretación de la IA */
-
-    .lectura-content h3 {
-        font-family: "Poppins", sans-serif !important;
-        color: #1a0526 !important;
-        font-size: 24px !important;
-        font-weight: 700 !important;
-        margin-top: 30px !important;
-        margin-bottom: 15px !important;
-        line-height: 1.3 !important;
-        border-bottom: 0px !important;
-    }
-
-    .lectura-content ul {
-        list-style-type: disc !important;
-        padding-left: 20px !important;
-        margin-bottom: 20px !important;
-    }
-
-    .lectura-content li {
-        margin-bottom: 5px;
-        font-family: "Poppins", sans-serif !important;
-    }
-
-    .lectura-content p {
-        font-family: "Poppins", sans-serif !important;
-        font-size: 15px !important;
-        line-height: 1.7 !important;
-        text-align: justify;
-        color: #5d4e60;
-    }
-</style>
-
 <section class="position-relative text-center d-flex align-items-center justify-content-center"
     style="
         background-color: #1a0526;
