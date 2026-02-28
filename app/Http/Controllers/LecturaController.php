@@ -27,10 +27,7 @@ class LecturaController extends Controller
     // INDEX
     function index(Request $request): View
     {
-        // Obtiene todos los temas para el filtro
         $temas = Tema::all();
-
-        // Obtiene usuario conectado actualmente
         $user = Auth::user();
 
         // Busca lecturas del tema asociado, más recientes primero
@@ -39,22 +36,18 @@ class LecturaController extends Controller
             ->orderBy('created_at', 'desc');
 
         // Aplica el filtro si el usuario seleccionó un tema
-        if ($request->has('tema_id') && $request->tema_id != '') {
-            $query->where('idtema', $request->tema_id);
+        if ($request->has('idtema') && $request->idtema != '') {
+            $query->where('idtema', $request->idtema);
         }
 
-        // Pagina los resultados (8 por página)
-        // ->appends(...) sirve para que no se pierda el filtro al cambiar de página
         $lecturas = $query->paginate(8)->appends($request->all());
 
-        // Envia tanto las lecturas como la lista de temas a la vista
         return view('lectura.index', ['lecturas' => $lecturas, 'temas' => $temas]);
     }
 
-    // CREATE (Formulario)
+    // CREATE
     function create($idtema): View
     {
-        // Busca el tema
         $tema = Tema::find($idtema);
 
         // Comprueba si existe. Si es null, damos error 404
@@ -70,7 +63,6 @@ class LecturaController extends Controller
     // STORE
     function store(StoreLecturaRequest $request): RedirectResponse
     {
-
         // Instancia con los datos del formulario
         $lectura = new Lectura($request->all());
         // Asigna el usuario
@@ -98,7 +90,6 @@ class LecturaController extends Controller
                 // Saca la cantidad de cartas aleatorias indicada
                 $cartas = Carta::inRandomOrder()->take($cantidad)->get();
 
-                // Variable para enviar a IA
                 $cartasParaIA = "";
 
                 foreach ($cartas as $index => $carta) {
